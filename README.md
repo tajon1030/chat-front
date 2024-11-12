@@ -51,6 +51,13 @@ SPA인 리액트에서는 적절하지않다.
 `<Link>`컴포넌트는 `<a>` 태그처럼 동작하지만, 페이지를 리로드하지 않고 경로 변경을 처리한다.  
 (MainPage.jsx)  
 
+- 리덕스 툴킷(redux-toolkit)  
+전역적인 상태관리를 위한 라이브러리
+store :
+reducer :
+dispatch : 
+createAsyncThunk : api 호출하는 상황에서 비동기처리를 해야하는데 redux store에서는 자체적으로 하지못하는 단점이 있기때문에 redux-thunk와 같은 미들웨어를 사용하여 비동기 처리를 진행하였다. 물론 useEffect를 사용할수도있으나 컴포넌의 외부에서의 비동기처리를 위해 관심사분리가 가능한 createAsyncThunk를 사용한다. 또한 러닝커브문제로 Redux-Toolkit의 createAsyncThunk를 사용해 비동기처리를 하였다.
+
 
 ## 학습 참고
 - 리액트 라우터 : [haesa:티스토리](https://pd6156.tistory.com/269)  
@@ -58,3 +65,4 @@ SPA인 리액트에서는 적절하지않다.
 [[React-Query] React-Query 개념잡기](https://velog.io/@kandy1002/React-Query-%ED%91%B9-%EC%B0%8D%EC%96%B4%EB%A8%B9%EA%B8%B0)  
 - location.href vs useNavigate vs Link : [window.location.href vs useNavigate vs Link
 ](https://code00.tistory.com/121)  
+- 리덕스 툴킷 : [Redux-toolkit으로-상태관리하기](https://velog.io/@mael1657/Redux-toolkit%EC%9C%BC%EB%A1%9C-%EC%83%81%ED%83%9C%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0#redux-toolkit-%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC)
