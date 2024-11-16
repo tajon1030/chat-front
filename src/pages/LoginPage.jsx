@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { login, loginPostAsync } from "../redux/loginSlice";
+import { setCookie } from "../util/cookieUtil";
 
 const initState = {
     id: '',
@@ -9,6 +10,7 @@ const initState = {
 }
 const LoginPage = () => {
     const [loginParam, setLoginParam] = useState({...initState});
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         loginParam[e.target.name] = e.target.value;
@@ -25,11 +27,13 @@ const LoginPage = () => {
                 alert("로그인 오류")
             }else {
                 alert("로그인성공");
-                // 토큰값을 cookie에 저장하여 추후 api호출시 헤더정보에 토큰값을 담아 보내도록 한다.
-                
-                Navigate({pathname:'/room'}, {replace:true})
+                saveAsCookie(data)
+                navigate({pathname:'/room'}, {replace:true})
             }
         })
+    }
+    const saveAsCookie = (data) => {
+        setCookie('member', JSON.stringify(data), 1); // 로그인내역 하루 저장
     }
 
     return ( 

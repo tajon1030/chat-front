@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
+import React, { useEffect, useState } from "react";
+import SockJS from "sockjs-client";
 import { API_SERVER_HOST, getOne } from "../api/chat";
+import { getCookie } from "../util/cookieUtil";
 
 const ChatRoom = () => {
   const [room, setRoom] = useState({});
@@ -12,6 +13,15 @@ const ChatRoom = () => {
   const [isConnected, setIsConnected] = useState(false);
   const roomId = localStorage.getItem("wschat.roomId");
   const userSender = localStorage.getItem("wschat.sender");
+
+  const getToken = () => {
+    // 쿠키 값이 없거나 비어있는 경우 처리
+    if (!getCookie("member")) {
+      console.error('쿠키에 member 정보가 없습니다.');
+      return null;  // 또는 적절한 값 반환
+    }
+    return getCookie("member").token;
+  }
 
   /**
    * sender 설정
@@ -46,7 +56,7 @@ const ChatRoom = () => {
    */
   const connect = (stompClient) => {
     stompClient.connect(
-      {},
+      {   Authorization : `Bearer ${getToken()}` },
       (frame) => {
         console.log("Connected: " + frame); // 연결 성공 확인
         setIsConnected(true); // 연결이 성공적으로 이루어지면 상태 업데이트
@@ -59,7 +69,13 @@ const ChatRoom = () => {
         stompClient.send(
           "/pub/chat/message",
           {},
-          JSON.stringify({ type: "ENTER", roomId, sender, message: "" })
+          JSON.stringify({
+            type: "ENTER",
+            roomId,
+            sender,
+            message: "",
+            token: getToken(),
+          })
         );
       },
       (error) => {
@@ -93,11 +109,17 @@ const ChatRoom = () => {
    * 메시지 보내기
    */
   const sendMessage = () => {
-    if (message.trim() !== "" && isConnected) { // 연결이 제대로 이루어질때에만 실행
+    if (message.trim() !== "" && isConnected) {
+      // 연결이 제대로 이루어질때에만 실행
       ws.send(
         "/pub/chat/message",
-        {},
-        JSON.stringify({ type: "TALK", roomId, sender, message })
+        {token: getToken() },
+        JSON.stringify({
+          type: "TALK",
+          roomId,
+          sender,
+          message,
+        })
       );
       setMessage(""); // 메시지 초기화
     } else {

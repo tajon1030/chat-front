@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createRoomRequest, getList } from "../api/chat";
+import { getCookie } from "../util/cookieUtil";
 
 const MainPage = () => {
   const [roomName, setRoomName] = useState("");
@@ -37,7 +38,8 @@ const MainPage = () => {
         setRoomName(""); // 입력값 초기화
         findAllRoom(); // 채팅방 목록 새로 고침
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         alert("채팅방 개설에 실패하였습니다.");
       });
   };
@@ -47,7 +49,7 @@ const MainPage = () => {
    * @param {*} roomId 입장할 채팅방 id
    */
   const enterRoom = (roomId) => {
-    const sender = prompt("대화명을 입력해 주세요.");
+    const sender = getCookie("member").name;
     if (sender !== "") {
       localStorage.setItem("wschat.sender", sender);
       localStorage.setItem("wschat.roomId", roomId);
