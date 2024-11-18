@@ -5,7 +5,7 @@ import { login, loginPostAsync } from "../redux/loginSlice";
 import { setCookie } from "../util/cookieUtil";
 
 const initState = {
-    id: '',
+    username: '',
     password: ''
 }
 const LoginPage = () => {
@@ -40,7 +40,7 @@ const LoginPage = () => {
         <div>
             <div>
                 <p><span>id:</span>
-                    <input type="text" name="id" value={loginParam.id} onChange={handleChange}></input>
+                    <input type="text" name="username" value={loginParam.username} onChange={handleChange}></input>
                 </p>
                 <p><span>pw:</span>
                     <input type="password" name="password" value={loginParam.password} onChange={handleChange}></input>

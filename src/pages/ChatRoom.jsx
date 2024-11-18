@@ -15,14 +15,8 @@ const ChatRoom = () => {
   const userSender = localStorage.getItem("wschat.sender");
 
   const getToken = () => {
-    // 쿠키 값이 없거나 비어있는 경우 처리
-    if (!getCookie("member")) {
-      console.error('쿠키에 member 정보가 없습니다.');
-      return null;  // 또는 적절한 값 반환
-    }
     return getCookie("member").token;
-  }
-
+}
   /**
    * sender 설정
    * sender 설정 이후에 webSocket에 연결되도록 하기위하여 useEffect를 분리하여 구현하였음
@@ -56,7 +50,7 @@ const ChatRoom = () => {
    */
   const connect = (stompClient) => {
     stompClient.connect(
-      {   Authorization : `Bearer ${getToken()}` },
+      { Authorization: `Bearer ${getToken()}` },
       (frame) => {
         console.log("Connected: " + frame); // 연결 성공 확인
         setIsConnected(true); // 연결이 성공적으로 이루어지면 상태 업데이트
@@ -68,13 +62,12 @@ const ChatRoom = () => {
         // 입장 메시지 전송
         stompClient.send(
           "/pub/chat/message",
-          {},
+          {'Authorization' :  `Bearer ${getToken()}`  },
           JSON.stringify({
             type: "ENTER",
             roomId,
             sender,
             message: "",
-            token: getToken(),
           })
         );
       },
@@ -113,7 +106,7 @@ const ChatRoom = () => {
       // 연결이 제대로 이루어질때에만 실행
       ws.send(
         "/pub/chat/message",
-        {token: getToken() },
+        {'Authorization' :  `Bearer ${getToken()}`  },
         JSON.stringify({
           type: "TALK",
           roomId,
