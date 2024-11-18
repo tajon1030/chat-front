@@ -100,6 +100,7 @@ const MainPage = () => {
             onClick={() => enterRoom(item.roomId)}
           >
             {item.name}
+            <span>{item.userCount}</span>
           </li>
         ))}
       </ul>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import SockJS from "sockjs-client";
 import { API_SERVER_HOST, getOne } from "../api/chat";
 import { getCookie } from "../util/cookieUtil";
+import { useNavigate } from "react-router-dom";
 
 const ChatRoom = () => {
   const [room, setRoom] = useState({});
@@ -13,6 +14,7 @@ const ChatRoom = () => {
   const [isConnected, setIsConnected] = useState(false);
   const roomId = localStorage.getItem("wschat.roomId");
   const userSender = localStorage.getItem("wschat.sender");
+  const navigate = useNavigate();
 
   const getToken = () => {
     return getCookie("member").token;
@@ -120,10 +122,23 @@ const ChatRoom = () => {
     }
   };
 
+  /**
+   * 채팅방 나가기
+   */
+  const quitRoom = () => {
+    navigate(`/room`); // 목록으로 이동
+  }
+
   return (
     <div className="container">
       <div>
-        <h2>{room.name}</h2>
+        <h2>
+          {room.name}
+          <span>{room.userCount}</span>
+        </h2>
+      </div>
+      <div>
+        <span onClick={quitRoom}>나가기</span>
       </div>
 
       <div className="input-group">
