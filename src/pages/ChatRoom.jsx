@@ -12,6 +12,7 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [userCount, setUserCount] = useState(0);
   const roomId = localStorage.getItem("wschat.roomId");
   const userSender = localStorage.getItem("wschat.sender");
   const navigate = useNavigate();
@@ -56,22 +57,12 @@ const ChatRoom = () => {
       (frame) => {
         console.log("Connected: " + frame); // 연결 성공 확인
         setIsConnected(true); // 연결이 성공적으로 이루어지면 상태 업데이트
-        stompClient.subscribe(`/sub/chat/room/${roomId}`, function (message) {
+        stompClient.subscribe(`/sub/chat/room/${roomId}`
+          , function (message) {
           const recv = JSON.parse(message.body);
           recvMessage(recv);
-        });
-
-        // 입장 메시지 전송
-        stompClient.send(
-          "/pub/chat/message",
-          {'Authorization' :  `Bearer ${getToken()}`  },
-          JSON.stringify({
-            type: "ENTER",
-            roomId,
-            sender,
-            message: "",
-          })
-        );
+        }
+        ,  { Authorization: `Bearer ${getToken()}` });
       },
       (error) => {
         console.error("WebSocket connection error:", error);
@@ -98,6 +89,7 @@ const ChatRoom = () => {
       },
       ...prevMessages,
     ]);
+    setUserCount(recv.userCount);
   };
 
   /**
@@ -126,7 +118,11 @@ const ChatRoom = () => {
    * 채팅방 나가기
    */
   const quitRoom = () => {
-    navigate(`/room`); // 목록으로 이동
+    ws.disconnect(function () {
+      // disconnect 후 실행하는 곳
+      navigate(`/room`); // 목록으로 이동
+    }, 
+    {'Authorization' :  `Bearer ${getToken()}` });
   }
 
   return (
@@ -134,7 +130,7 @@ const ChatRoom = () => {
       <div>
         <h2>
           {room.name}
-          <span>{room.userCount}</span>
+          <span>{userCount}</span>
         </h2>
       </div>
       <div>
