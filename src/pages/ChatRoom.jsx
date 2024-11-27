@@ -1,9 +1,9 @@
 import { Stomp } from "@stomp/stompjs";
 import React, { useEffect, useState } from "react";
-import SockJS from "sockjs-client";
-import { API_SERVER_HOST, getOne } from "../api/chat";
-import { getCookie } from "../util/cookieUtil";
 import { useNavigate } from "react-router-dom";
+import SockJS from "sockjs-client";
+import { API_SERVER_HOST, getOne, quitRoomApi } from "../api/chat";
+import { getCookie } from "../util/cookieUtil";
 
 const ChatRoom = () => {
   const [room, setRoom] = useState({});
@@ -115,14 +115,14 @@ const ChatRoom = () => {
   };
 
   /**
-   * 채팅방 나가기
+   * 채팅방 퇴장
    */
   const quitRoom = () => {
-    ws.disconnect(function () {
-      // disconnect 후 실행하는 곳
+    quitRoomApi(roomId)
+    .then( () => {
+      console.log('quitRoom called');
       navigate(`/room`); // 목록으로 이동
-    }, 
-    {'Authorization' :  `Bearer ${getToken()}` });
+    });
   }
 
   return (

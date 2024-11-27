@@ -19,3 +19,8 @@ export const createRoomRequest = async (name) => {
   const res = await jwtAxios.post(`${prefix}/room`, name);
   return res.data;
 };
+
+export const quitRoomApi = async (roomId) => {
+  const res = await jwtAxios.post(`${prefix}/room/${roomId}/quit`);
+  return res.data;
+}
