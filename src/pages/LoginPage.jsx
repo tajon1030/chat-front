@@ -27,7 +27,7 @@ const LoginPage = () => {
                 alert("로그인 오류")
             }else {
                 alert("로그인성공");
-                saveAsCookie(data)
+                saveAsCookie(data.response)
                 navigate({pathname:'/room'}, {replace:true})
             }
         })

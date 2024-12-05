@@ -4,13 +4,13 @@ import { getCookie } from "./cookieUtil";
 
 const jwtAxios = axios.create()
 
-const getToken = () => {
+const getMemberCookie = () => {
     // 쿠키 값이 없거나 비어있는 경우 처리
-    if (!getCookie("member")) {
+    if (!getCookie('member')) {
       console.error('쿠키에 member 정보가 없습니다.');
       return null;  // 또는 적절한 값 반환
     }
-    return getCookie("member");
+    return getCookie('member');
 }
 
 
@@ -25,7 +25,7 @@ const getToken = () => {
 // 액시오스로 뭔가 데이터를 보내면 beforeReq동작
 const beforeReq = (config) => {
     // 쿠키를 확인해서
-    const memberInfo = getToken();
+    const memberInfo = getMemberCookie();
 
     // 로그인한값이 없을경우에 
     if(!memberInfo){
@@ -41,7 +41,6 @@ const beforeReq = (config) => {
     const accessToken = memberInfo.token;
     // 헤더에 accessToken값을 담아줌
     config.headers.Authorization = `Bearer ${accessToken}`
-
     return config;
 }
 

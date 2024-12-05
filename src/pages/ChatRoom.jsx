@@ -18,7 +18,7 @@ const ChatRoom = () => {
   const navigate = useNavigate();
 
   const getToken = () => {
-    return getCookie("member").token;
+    return getCookie('member').token;
 }
   /**
    * sender 설정
@@ -34,7 +34,7 @@ const ChatRoom = () => {
     if (!roomId || !sender) return; // sender가 설정되지 않으면 WebSocket 연결을 하지 않음
     // 방 정보 가져오기
     getOne(roomId).then((data) => {
-      setRoom(data);
+      setRoom(data.response);
     });
     // WebSocket 연결
     const sock = new SockJS(`${API_SERVER_HOST}/ws-stomp`);
@@ -52,9 +52,11 @@ const ChatRoom = () => {
    * @param {*} stompClient
    */
   const connect = (stompClient) => {
+    console.log('before connect');
     stompClient.connect(
       { Authorization: `Bearer ${getToken()}` },
       (frame) => {
+        console.log("됐나");
         console.log("Connected: " + frame); // 연결 성공 확인
         setIsConnected(true); // 연결이 성공적으로 이루어지면 상태 업데이트
         stompClient.subscribe(`/sub/chat/room/${roomId}`
@@ -65,6 +67,7 @@ const ChatRoom = () => {
         ,  { Authorization: `Bearer ${getToken()}` });
       },
       (error) => {
+        console.log("뭔데");
         console.error("WebSocket connection error:", error);
         setIsConnected(false); // 연결 실패 시 상태 업데이트
         // 재연결

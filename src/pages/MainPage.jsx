@@ -14,7 +14,9 @@ const MainPage = () => {
   const findAllRoom = () => {
     getList()
       .then((data) => {
-        setChatrooms(data);
+        if(data.success){
+          setChatrooms(data.response.content);
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -49,7 +51,7 @@ const MainPage = () => {
    * @param {*} roomId 입장할 채팅방 id
    */
   const enterRoom = (roomId) => {
-    const sender = getCookie("member").name;
+    const sender = getCookie('member').name;
     if (sender !== "") {
       localStorage.setItem("wschat.sender", sender);
       localStorage.setItem("wschat.roomId", roomId);
