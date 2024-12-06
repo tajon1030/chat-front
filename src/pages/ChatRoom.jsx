@@ -56,18 +56,17 @@ const ChatRoom = () => {
     stompClient.connect(
       { Authorization: `Bearer ${getToken()}` },
       (frame) => {
-        console.log("됐나");
         console.log("Connected: " + frame); // 연결 성공 확인
         setIsConnected(true); // 연결이 성공적으로 이루어지면 상태 업데이트
-        stompClient.subscribe(`/sub/chat/room/${roomId}`
-          , function (message) {
-          const recv = JSON.parse(message.body);
-          recvMessage(recv);
-        }
-        ,  { Authorization: `Bearer ${getToken()}` });
+        stompClient.subscribe(`/exchange/chat.exchange/room.${roomId}`
+            , function (message) {
+              const recv = JSON.parse(message.body);
+              recvMessage(recv);
+          }
+          ,  { Authorization: `Bearer ${getToken()}` }
+        );
       },
       (error) => {
-        console.log("뭔데");
         console.error("WebSocket connection error:", error);
         setIsConnected(false); // 연결 실패 시 상태 업데이트
         // 재연결
@@ -84,6 +83,7 @@ const ChatRoom = () => {
    * @param {*} recv
    */
   const recvMessage = (recv) => {
+    console.log(recv)
     setMessages((prevMessages) => [
       {
         type: recv.type,
@@ -92,6 +92,7 @@ const ChatRoom = () => {
       },
       ...prevMessages,
     ]);
+    // 메시지 받을때마다 유저카운트 수 갱신
     setUserCount(recv.userCount);
   };
 
@@ -102,7 +103,7 @@ const ChatRoom = () => {
     if (message.trim() !== "" && isConnected) {
       // 연결이 제대로 이루어질때에만 실행
       ws.send(
-        "/pub/chat/message",
+        "/pub/chat.message",
         {'Authorization' :  `Bearer ${getToken()}`  },
         JSON.stringify({
           type: "TALK",
@@ -111,6 +112,7 @@ const ChatRoom = () => {
           message,
         })
       );
+      
       setMessage(""); // 메시지 초기화
     } else {
       console.error("STOMP connection is not established yet!");
