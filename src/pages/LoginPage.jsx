@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, loginPostAsync } from "../redux/loginSlice";
-import { setCookie } from "../util/cookieUtil";
 
 const initState = {
     username: '',
@@ -23,17 +22,14 @@ const LoginPage = () => {
         dispatch(loginPostAsync(loginParam))
         .unwrap()
         .then(data => {
-            if(data.error){
-                alert("로그인 오류")
-            }else {
+            if(data.success){
                 alert("로그인성공");
-                saveAsCookie(data.response)
                 navigate({pathname:'/room'}, {replace:true})
+            }else {
+                alert("로그인 오류");
+                setLoginParam({...initState});
             }
         })
-    }
-    const saveAsCookie = (data) => {
-        setCookie('member', JSON.stringify(data), 1); // 로그인내역 하루 저장
     }
 
     return ( 
