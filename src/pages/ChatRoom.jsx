@@ -18,8 +18,8 @@ const ChatRoom = () => {
   const navigate = useNavigate();
 
   const getToken = () => {
-    return getCookie('member').token;
-}
+    return getCookie("member").token;
+  };
   /**
    * sender 설정
    * sender 설정 이후에 webSocket에 연결되도록 하기위하여 useEffect를 분리하여 구현하였음
@@ -52,18 +52,19 @@ const ChatRoom = () => {
    * @param {*} stompClient
    */
   const connect = (stompClient) => {
-    console.log('before connect');
+    console.log("before connect");
     stompClient.connect(
       { Authorization: `Bearer ${getToken()}` },
       (frame) => {
         console.log("Connected: " + frame); // 연결 성공 확인
         setIsConnected(true); // 연결이 성공적으로 이루어지면 상태 업데이트
-        stompClient.subscribe(`/exchange/chat.exchange/room.${roomId}`
-            , function (message) {
-              const recv = JSON.parse(message.body);
-              recvMessage(recv);
-          }
-          ,  { Authorization: `Bearer ${getToken()}` }
+        stompClient.subscribe(
+          `/exchange/chat.exchange/room.${roomId}`,
+          function (message) {
+            const recv = JSON.parse(message.body);
+            recvMessage(recv);
+          },
+          { Authorization: `Bearer ${getToken()}` }
         );
       },
       (error) => {
@@ -83,7 +84,6 @@ const ChatRoom = () => {
    * @param {*} recv
    */
   const recvMessage = (recv) => {
-    console.log(recv)
     setMessages((prevMessages) => [
       {
         type: recv.type,
@@ -104,7 +104,7 @@ const ChatRoom = () => {
       // 연결이 제대로 이루어질때에만 실행
       ws.send(
         "/pub/chat.message",
-        {'Authorization' :  `Bearer ${getToken()}`  },
+        { Authorization: `Bearer ${getToken()}` },
         JSON.stringify({
           type: "TALK",
           roomId,
@@ -112,7 +112,7 @@ const ChatRoom = () => {
           message,
         })
       );
-      
+
       setMessage(""); // 메시지 초기화
     } else {
       console.error("STOMP connection is not established yet!");
@@ -123,15 +123,26 @@ const ChatRoom = () => {
    * 채팅방 퇴장
    */
   const quitRoom = () => {
-    quitRoomApi(roomId)
-    .then( () => {
-      console.log('quitRoom called');
+    quitRoomApi(roomId).then(() => {
+      console.log("quitRoom called");
       navigate(`/room`); // 목록으로 이동
     });
+  };
+
+  /**
+   * 뒤로가기
+   */
+  const goBack = () => {
+    navigate(-1);
   }
 
   return (
     <div className="container">
+      <div>
+        <span onClick={goBack}>
+          {"<-"}
+        </span>
+      </div>
       <div>
         <h2>
           {room.name}
