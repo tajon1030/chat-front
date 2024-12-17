@@ -36,7 +36,7 @@ const MainPage = () => {
     params.append("name", roomName);
     createRoomRequest(params)
       .then((data) => {
-        alert(data.name + "방 개설에 성공하였습니다.");
+        alert(data.response.name + "방 개설에 성공하였습니다.");
         setRoomName(""); // 입력값 초기화
         findAllRoom(); // 채팅방 목록 새로 고침
       })

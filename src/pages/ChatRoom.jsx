@@ -18,7 +18,7 @@ const ChatRoom = () => {
   const navigate = useNavigate();
 
   const getToken = () => {
-    return getCookie("member").token;
+    return getCookie("member").accessToken;
   };
   /**
    * sender 설정
